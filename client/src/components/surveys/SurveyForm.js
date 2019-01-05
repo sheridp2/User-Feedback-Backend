@@ -1,31 +1,55 @@
-import React, { Component } from "react";
-import { reduxForm, Field } from "redux-form";
-import SurveyField from "./SurveyField";
+import _ from 'lodash'
+import React, { Component } from 'react';
+import { reduxForm, Field } from 'redux-form';
+import { Link } from 'react-router-dom'
+import SurveyField from './SurveyField';
+import validateEmails from '../../utils/validateEmails'
+
+const FIELDS = [
+  {label: 'Survey Title', name: 'title', noValueError:'You must provide a survey title'},
+  {label: 'Subject Line', name: 'subject', noValueError:'You must provide a subject for your emails'},
+  {label: 'Email Body', name: 'body', noValueError:'You must provide a body for the email'},
+  {label: 'Recipient List', name: 'emails', noValueError:'You must provide emails addresses seperated by commas'}
+];
 
 class SurveyForm extends Component {
   renderFields() {
-    return (
-      <div>
-        <Field label="Survey Title" type="text" name="title" component={SurveyField} />
-        <Field label="Subject Line" type="text" name="subject" component={SurveyField} />
-        <Field label="Email Body" type="text" name="body" component={SurveyField} />
-        <Field label="Recipient List" type="text" name="emails" component={SurveyField} />
-
-      </div>
-    );
+    return _.map(FIELDS, ({ label, name }) =>{
+      return <Field key={name} component={SurveyField} type="text" label={label} name={name}/>
+    })
   }
   render() {
     return (
       <div>
-        <form onSubmit={this.props.handleSubmit(value => console.log(value))}>
+        <form onSubmit={this.props.handleSubmit(this.props.onSurveySubmit)}>
           {this.renderFields()}
-          <button type="Submit">Submit</button>
+          <Link to="/surveys" className="red btn-flat white-text">
+            Cancel
+          </Link>
+          <button type="submit" className="teal btn-flat right white-text">
+            Next
+            <i className="material-icons right">done</i>
+          </button>
         </form>
       </div>
     );
   }
 }
 
+function validate(values) {
+  const errors = {};
+  errors.emails = validateEmails(values.emails || '')
+
+  _.each(FIELDS, ({ name, noValueError }) => {
+    if(!values[name]){
+      errors[name] = noValueError;
+    }
+  })
+
+  return errors
+}
+
 export default reduxForm({
+  validate,
   form: "surveyForm"
 })(SurveyForm);
