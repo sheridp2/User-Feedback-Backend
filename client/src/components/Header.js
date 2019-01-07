@@ -33,6 +33,7 @@ class Header extends Component {
             className="left brand-logo"
           >
             Emaily
+            <span style={{ fontSize: '20px', paddingLeft:'15px'}}>Get feedback from your users</span>
           </Link>
           <ul className="right">
             {this.renderContent()}
