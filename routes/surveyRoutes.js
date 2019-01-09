@@ -75,4 +75,8 @@ module.exports = app => {
       res.status(422).sen(err);
     }
   });
+
+  // app.delete("/api/surveys/:surveyId", requireLogin, async (req, res) =>{
+  //
+  // })
 };
